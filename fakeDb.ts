@@ -1,4 +1,5 @@
 import type { InventoryStatus, Item } from "./item.ts";
+import { hasStatus } from "./sell.ts";
 
 const mockItems: Item[] = [
   {
@@ -135,27 +136,24 @@ const updateItems = ({
   return updatedItems;
 };
 
-const findItems = ({
+const findItems = <T extends InventoryStatus>({
   where,
 }: {
   where: {
     upc: {
       in: string[];
     };
-    status?: InventoryStatus;
+    status: T;
   };
 }): {
-  items: Item<InventoryStatus>[];
+  items: Item<T>[];
   unmatchedItems: Item<InventoryStatus>[];
 } => {
   const baseItems = mockItems.filter((item) => where.upc.in.includes(item.upc));
-  const hasStatus = !!where.status;
-  const filteredItems = hasStatus
-    ? baseItems.filter((item) => item.status === where.status)
-    : baseItems;
+  const filteredItems = baseItems.filter(hasStatus(where.status));
   return {
     items: filteredItems,
-    unmatchedItems: baseItems.filter((item) => !filteredItems.includes(item)),
+    unmatchedItems: baseItems.filter((item) => !baseItems.includes(item)),
   };
 };
 

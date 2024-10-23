@@ -7,12 +7,11 @@ export async function sell(itemUpcs: string[]): Promise<Item[]> {
       upc: {
         in: itemUpcs,
       },
+      status: "in_stock",
     },
   });
 
-  const sellableItems = items.filter(hasStatus("in_stock"));
-
-  return await sellItems(sellableItems);
+  return await sellItems(items);
 }
 
 const sellItems = async (items: Item<"in_stock">[]) => {
@@ -28,7 +27,7 @@ const sellItems = async (items: Item<"in_stock">[]) => {
   });
 };
 
-const hasStatus =
+export const hasStatus =
   <T extends InventoryStatus>(status: T) =>
   (item: Item): item is Item<T> =>
     item.status === status;
