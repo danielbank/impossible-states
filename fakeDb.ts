@@ -144,7 +144,10 @@ const findItems = ({
     };
     status?: InventoryStatus;
   };
-}): { items: Item[]; unmatchedItems: Item[] } => {
+}): {
+  items: Item<InventoryStatus>[];
+  unmatchedItems: Item<InventoryStatus>[];
+} => {
   const baseItems = mockItems.filter((item) => where.upc.in.includes(item.upc));
   const hasStatus = !!where.status;
   const filteredItems = hasStatus
